@@ -96,12 +96,47 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 		orgID   uuid.UUID
 		folders []folder.Folder
 		want    []folder.Folder
-	}{}
+	}{
+		{
+			name:  "Test with Valid UUID",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.beta",
+				},
+				{
+					Name:  "gamma",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.gamma",
+				},
+			},
+
+			want: []folder.Folder{
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.beta",
+				},
+				{
+					Name:  "gamma",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.gamma",
+				},
+			},
+		},
+	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := folder.NewDriver(tt.folders)
-			get := f.GetFoldersByOrgID(tt.orgID)
+			get := f.GetAllChildFolders(tt.orgID, "alpha")
 
 			if !reflect.DeepEqual(get, tt.want) {
 				t.Errorf("GetFoldersByOrgID() = %v, want %v", get, tt.want)
