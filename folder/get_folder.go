@@ -1,27 +1,53 @@
 package folder
 
-import "github.com/gofrs/uuid"
+import (
+	"github.com/gofrs/uuid"
+)
 
 func GetAllFolders() []Folder {
 	return GetSampleData()
 }
 
 func (f *driver) GetFoldersByOrgID(orgID uuid.UUID) []Folder {
-	folders := f.folders
-
-	res := []Folder{}
-	for _, f := range folders {
-		if f.OrgId == orgID {
-			res = append(res, f)
-		}
+	value, exists := f.orgs[orgID]
+	if !exists {
+		return []Folder{}
 	}
 
+	res := []Folder{}
+	for _, f := range value.folders {
+		res = append(res, f.file)
+	}
 	return res
+}
 
+func (f *driver) GetChildren(parent FileNode) []Folder {
+	children := []Folder{}
+	for _, fileNodePtr := range parent.children {
+		children = append(children, fileNodePtr.file)
+		children = append(children, f.GetChildren(*fileNodePtr)...)
+	}
+
+	return children
 }
 
 func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
-	// Your code here...
+	org, exists := f.orgs[orgID]
 
-	return []Folder{}
+	if !exists {
+		return []Folder{}
+	}
+
+	var parentNode *FileNode
+	for _, fileNode := range org.folders {
+		if fileNode.file.Name == name {
+			parentNode = &fileNode
+		}
+	}
+
+	if parentNode == nil {
+		return []Folder{}
+	}
+
+	return f.GetChildren(*parentNode)
 }
