@@ -98,6 +98,58 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 		want    []folder.Folder
 	}{
 		{
+			name:  "Test with Invalid UUID",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID + "."),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.beta",
+				},
+			},
+
+			want: []folder.Folder{},
+		},
+		{
+			name:  "Test only inside organisation",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.beta",
+				},
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+					Paths: "alpha.beta",
+				},
+			},
+
+			want: []folder.Folder{
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.beta",
+				},
+			},
+		},
+		{
 			name:  "Test with Valid UUID",
 			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
 			folders: []folder.Folder{
