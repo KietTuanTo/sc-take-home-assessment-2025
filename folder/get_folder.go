@@ -21,14 +21,14 @@ func (f *driver) GetFoldersByOrgID(orgID uuid.UUID) []Folder {
 	return res
 }
 
-func (f *driver) GetChildren(parent FileNode) []Folder {
-	children := []Folder{}
+func (f *driver) GetChildren(parent *FileNode) []Folder {
+	nodeChildren := []Folder{}
 	for _, fileNodePtr := range parent.children {
-		children = append(children, fileNodePtr.file)
-		children = append(children, f.GetChildren(*fileNodePtr)...)
+		nodeChildren = append(nodeChildren, fileNodePtr.file)
+		nodeChildren = append(nodeChildren, f.GetChildren(fileNodePtr)...)
 	}
 
-	return children
+	return nodeChildren
 }
 
 func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
@@ -41,7 +41,7 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
 	var parentNode *FileNode
 	for _, fileNode := range org.folders {
 		if fileNode.file.Name == name {
-			parentNode = &fileNode
+			parentNode = fileNode
 		}
 	}
 
@@ -49,5 +49,5 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
 		return []Folder{}
 	}
 
-	return f.GetChildren(*parentNode)
+	return f.GetChildren(parentNode)
 }
