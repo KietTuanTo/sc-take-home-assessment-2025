@@ -1,8 +1,6 @@
 package folder
 
 import (
-	"fmt"
-
 	"github.com/gofrs/uuid"
 )
 
@@ -46,8 +44,6 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
 			parentNode = fileNode
 		}
 	}
-
-	fmt.Println(parentNode)
 
 	if parentNode == nil {
 		return []Folder{}
