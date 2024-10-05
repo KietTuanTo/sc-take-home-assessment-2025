@@ -110,6 +110,48 @@ func Test_folder_MoveFolder(t *testing.T) {
 			want: []folder.Folder{},
 			err:  errors.New("error: cannot move a folder to a child of itself"),
 		},
+		{
+			name:  "Basic valid use case",
+			src:   "alpha",
+			dst:   "beta",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "beta",
+				},
+				{
+					Name:  "charlie",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.charlie",
+				},
+			},
+
+			want: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "beta.alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "beta",
+				},
+				{
+					Name:  "charlie",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "beta.alpha.charlie",
+				},
+			},
+			err: nil,
+		},
 	}
 
 	for _, tt := range tests {
@@ -121,7 +163,11 @@ func Test_folder_MoveFolder(t *testing.T) {
 				t.Errorf("MoveFolder() = %v, want %v for output", get, tt.want)
 			}
 
-			if tt.err.Error() != err.Error() {
+			if tt.err != nil && err == nil {
+				t.Errorf("MoveFolder() = nil, want %v for error", tt.err)
+			} else if tt.err == nil && err != nil {
+				t.Errorf("MoveFolder() = %v, want nil for error", tt.err)
+			} else if tt.err != nil && err != nil && tt.err.Error() != err.Error() {
 				t.Errorf("MoveFolder() = %v\n want %v for error", err, tt.err)
 			}
 		})
