@@ -6,6 +6,16 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+type FileNode struct {
+	file     Folder
+	parent   *FileNode
+	children []*FileNode
+}
+
+type Organization struct {
+	folders []*FileNode
+}
+
 type IDriver interface {
 	// GetFoldersByOrgID returns all folders that belong to a specific orgID.
 	GetFoldersByOrgID(orgID uuid.UUID) []Folder
@@ -20,12 +30,17 @@ type IDriver interface {
 	MoveFolder(name string, dst string) ([]Folder, error)
 }
 
-type FileNode struct {
-	file     Folder
-	parent   *FileNode
-	children []*FileNode
+func NewDriver(folders []Folder) IDriver {
+	orgs := GenerateOrgs(folders)
+
+	return &driver{
+		orgs: orgs,
+	}
 }
 
+// NewFileNode returns a pointer to a FileNode, containing
+// a given folder, with default iniitialized values for parent
+// and child
 func NewFileNode(folder Folder) *FileNode {
 	return &FileNode{
 		file:     folder,
@@ -34,10 +49,7 @@ func NewFileNode(folder Folder) *FileNode {
 	}
 }
 
-type Organization struct {
-	folders []*FileNode
-}
-
+// NewOrg returns an Organization struct
 func NewOrg() Organization {
 	return Organization{
 		folders: []*FileNode{},
@@ -48,7 +60,9 @@ type driver struct {
 	orgs map[uuid.UUID]Organization
 }
 
-func findFileNode(folders []*FileNode, name string) *FileNode {
+// FindFileNode returns a pointer to the FileNode with
+// a given name, stored inside the same Organization
+func FindFileNode(folders []*FileNode, name string) *FileNode {
 	for _, f := range folders {
 		if f.file.Name == name {
 			return f
@@ -58,7 +72,10 @@ func findFileNode(folders []*FileNode, name string) *FileNode {
 	return nil
 }
 
-func generateFileNodes(folders []Folder, orgs map[uuid.UUID]Organization) {
+// GenerateFileNodes returns a map hashed by UUIDs, storing
+// Organizations which contains a slice of pointers to
+// their organization's respective FileNodes
+func GenerateFileNodes(folders []Folder, orgs map[uuid.UUID]Organization) {
 	for _, f := range folders {
 		_, exists := orgs[f.OrgId]
 		if !exists {
@@ -70,7 +87,11 @@ func generateFileNodes(folders []Folder, orgs map[uuid.UUID]Organization) {
 	}
 }
 
-func generateNodeParents(folders []*FileNode) {
+// GenerateNodeParents changes the 'parent' field of
+// each folder in 'folders' to the FileNode whose file
+// name is the immediate parent of each file given in
+// their path
+func GenerateNodeParents(folders []*FileNode) {
 	for i, fileNode := range folders {
 		curr_path := fileNode.file.Paths
 		path_sections := strings.Split(curr_path, ".")
@@ -79,7 +100,9 @@ func generateNodeParents(folders []*FileNode) {
 			continue
 		}
 
-		parent := findFileNode(folders, path_sections[len(path_sections)-2])
+		// The name of the immediate parent FileNode is given by the second
+		// last directory in the file's path, as the last is itself
+		parent := FindFileNode(folders, path_sections[len(path_sections)-2])
 		if parent == nil {
 			continue
 		}
@@ -89,7 +112,9 @@ func generateNodeParents(folders []*FileNode) {
 	}
 }
 
-func generateNodeChildren(folders []*FileNode, parentNode *FileNode) []*FileNode {
+// GenerateNodeChildren returns a slice of FileNode pointers, who are
+// the immediate children of a given 'parentNode"
+func GenerateNodeChildren(folders []*FileNode, parentNode *FileNode) []*FileNode {
 	children := []*FileNode{}
 	for _, childNode := range folders {
 		if childNode.parent != nil && childNode.parent.file.Name == parentNode.file.Name {
@@ -99,24 +124,19 @@ func generateNodeChildren(folders []*FileNode, parentNode *FileNode) []*FileNode
 	return children
 }
 
-func generateOrgs(folders []Folder) map[uuid.UUID]Organization {
+// GenerateOrgs returns a map of Organizations, hashed
+// by the Organization's OrgId and containing a slice of
+// pointers to all FileNodes contained in that Organization
+func GenerateOrgs(folders []Folder) map[uuid.UUID]Organization {
 	orgs := map[uuid.UUID]Organization{}
-	generateFileNodes(folders, orgs)
+	GenerateFileNodes(folders, orgs)
 
 	for _, org := range orgs {
-		generateNodeParents(org.folders)
+		GenerateNodeParents(org.folders)
 		for i, fileNode := range org.folders {
-			org.folders[i].children = generateNodeChildren(org.folders, fileNode)
+			org.folders[i].children = GenerateNodeChildren(org.folders, fileNode)
 		}
 	}
 
 	return orgs
-}
-
-func NewDriver(folders []Folder) IDriver {
-	orgs := generateOrgs(folders)
-
-	return &driver{
-		orgs: orgs,
-	}
 }
