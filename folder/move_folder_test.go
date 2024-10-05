@@ -152,6 +152,150 @@ func Test_folder_MoveFolder(t *testing.T) {
 			},
 			err: nil,
 		},
+		{
+			name:  "Valid Use Case 2",
+			src:   "bravo",
+			dst:   "golf",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					Paths: "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "bravo",
+					Paths: "alpha.delta.bravo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "charlie",
+					Paths: "alpha.delta.bravo.charlie",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "delta",
+					Paths: "alpha.delta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "echo",
+					Paths: "alpha.delta.echo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "golf",
+					Paths: "golf",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+			},
+
+			want: []folder.Folder{
+				{
+					Name:  "alpha",
+					Paths: "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "bravo",
+					Paths: "golf.bravo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "charlie",
+					Paths: "golf.bravo.charlie",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "delta",
+					Paths: "alpha.delta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "echo",
+					Paths: "alpha.delta.echo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "golf",
+					Paths: "golf",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+			},
+			err: nil,
+		},
+		{
+			name:  "Valid Use Case 3",
+			src:   "bravo",
+			dst:   "delta",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					Paths: "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "bravo",
+					Paths: "alpha.bravo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "charlie",
+					Paths: "alpha.bravo.charlie",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "delta",
+					Paths: "alpha.delta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "echo",
+					Paths: "alpha.delta.echo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "golf",
+					Paths: "golf",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+			},
+
+			want: []folder.Folder{
+				{
+					Name:  "alpha",
+					Paths: "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "bravo",
+					Paths: "alpha.delta.bravo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "charlie",
+					Paths: "alpha.delta.bravo.charlie",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "delta",
+					Paths: "alpha.delta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "echo",
+					Paths: "alpha.delta.echo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+				{
+					Name:  "golf",
+					Paths: "golf",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+				},
+			},
+			err: nil,
+		},
 	}
 
 	for _, tt := range tests {
