@@ -116,6 +116,37 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 			want: []folder.Folder{},
 		},
 		{
+			name:  "Test with Non Existent FileName",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.beta",
+				},
+			},
+
+			want: []folder.Folder{},
+		},
+		{
+			name:  "Test with File Name in Different Org",
+			orgID: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.beta",
+				},
+			},
+
+			want: []folder.Folder{},
+		},
+		{
 			name:  "Test only inside organisation",
 			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
 			folders: []folder.Folder{

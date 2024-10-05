@@ -74,11 +74,18 @@ func generateNodeParents(folders []*FileNode) {
 	for i, fileNode := range folders {
 		curr_path := fileNode.file.Paths
 		path_sections := strings.Split(curr_path, ".")
-		if len(path_sections) > 1 {
-			parent := findFileNode(folders, path_sections[len(path_sections)-2])
-			folders[i].parent = parent
-			parent.children = append(parent.children, fileNode)
+
+		if len(path_sections) <= 1 {
+			continue
 		}
+
+		parent := findFileNode(folders, path_sections[len(path_sections)-2])
+		if parent == nil {
+			continue
+		}
+
+		folders[i].parent = parent
+		parent.children = append(parent.children, fileNode)
 	}
 }
 
