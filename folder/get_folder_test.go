@@ -195,6 +195,11 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 					Paths: "alpha.beta",
 				},
 				{
+					Name:  "delta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.delta",
+				},
+				{
 					Name:  "gamma",
 					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
 					Paths: "alpha.beta.gamma",
@@ -211,6 +216,11 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 					Name:  "gamma",
 					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
 					Paths: "alpha.beta.gamma",
+				},
+				{
+					Name:  "delta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.delta",
 				},
 			},
 		},
