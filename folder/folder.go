@@ -26,8 +26,8 @@ type FileNode struct {
 	children []*FileNode
 }
 
-func NewFileNode(folder Folder) FileNode {
-	return FileNode{
+func NewFileNode(folder Folder) *FileNode {
+	return &FileNode{
 		file:     folder,
 		parent:   nil,
 		children: []*FileNode{},
@@ -35,29 +35,23 @@ func NewFileNode(folder Folder) FileNode {
 }
 
 type Organization struct {
-	folders []FileNode
+	folders []*FileNode
 }
 
 func NewOrg() Organization {
 	return Organization{
-		folders: []FileNode{},
+		folders: []*FileNode{},
 	}
 }
 
 type driver struct {
-	// define attributes here
-	// data structure to store folders
-	// or preprocessed data
 	orgs map[uuid.UUID]Organization
-
-	// example: feel free to change the data structure, if slice is not what you want
-	// folders []Folder
 }
 
-func findFileNode(folders []FileNode, name string) *FileNode {
+func findFileNode(folders []*FileNode, name string) *FileNode {
 	for _, f := range folders {
 		if f.file.Name == name {
-			return &f
+			return f
 		}
 	}
 
@@ -76,23 +70,23 @@ func generateFileNodes(folders []Folder, orgs map[uuid.UUID]Organization) {
 	}
 }
 
-func generateNodeParents(folders []FileNode) {
+func generateNodeParents(folders []*FileNode) {
 	for i, fileNode := range folders {
 		curr_path := fileNode.file.Paths
 		path_sections := strings.Split(curr_path, ".")
 		if len(path_sections) > 1 {
 			parent := findFileNode(folders, path_sections[len(path_sections)-2])
 			folders[i].parent = parent
-			parent.children = append(parent.children, &fileNode)
+			parent.children = append(parent.children, fileNode)
 		}
 	}
 }
 
-func generateNodeChildren(folders []FileNode, parentNode FileNode) []*FileNode {
+func generateNodeChildren(folders []*FileNode, parentNode *FileNode) []*FileNode {
 	children := []*FileNode{}
 	for _, childNode := range folders {
 		if childNode.parent != nil && childNode.parent.file.Name == parentNode.file.Name {
-			children = append(children, &childNode)
+			children = append(children, childNode)
 		}
 	}
 	return children
