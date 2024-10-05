@@ -2,7 +2,6 @@ package folder_test
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -53,6 +52,64 @@ func Test_folder_MoveFolder(t *testing.T) {
 			want: []folder.Folder{},
 			err:  errors.New("error: destination folder does not exist"),
 		},
+		{
+			name:  "Moving to same folder",
+			src:   "alpha",
+			dst:   "alpha",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+			},
+
+			want: []folder.Folder{},
+			err:  errors.New("error: cannot move a folder to itself"),
+		},
+		{
+			name:  "Source and Destination from different orgs",
+			src:   "alpha",
+			dst:   "beta",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+					Paths: "beta",
+				},
+			},
+
+			want: []folder.Folder{},
+			err:  errors.New("error: cannot move a folder to a different organization"),
+		},
+		{
+			name:  "Destination is a child of Source",
+			src:   "alpha",
+			dst:   "beta",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.beta",
+				},
+			},
+
+			want: []folder.Folder{},
+			err:  errors.New("error: cannot move a folder to a child of itself"),
+		},
 	}
 
 	for _, tt := range tests {
@@ -64,8 +121,6 @@ func Test_folder_MoveFolder(t *testing.T) {
 				t.Errorf("MoveFolder() = %v, want %v for output", get, tt.want)
 			}
 
-			fmt.Println(tt.err)
-			fmt.Println(err)
 			if tt.err.Error() != err.Error() {
 				t.Errorf("MoveFolder() = %v\n want %v for error", err, tt.err)
 			}
