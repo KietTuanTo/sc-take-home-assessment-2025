@@ -114,7 +114,7 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 				{
 					Name:  "gamma",
 					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
-					Paths: "alpha.gamma",
+					Paths: "alpha.beta.gamma",
 				},
 			},
 
@@ -127,7 +127,7 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 				{
 					Name:  "gamma",
 					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
-					Paths: "alpha.gamma",
+					Paths: "alpha.beta.gamma",
 				},
 			},
 		},
