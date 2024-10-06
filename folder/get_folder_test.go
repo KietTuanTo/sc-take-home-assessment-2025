@@ -93,12 +93,14 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 	t.Parallel()
 	tests := [...]struct {
 		name    string
+		src     string
 		orgID   uuid.UUID
 		folders []folder.Folder
 		want    []folder.Folder
 	}{
 		{
 			name:  "Test with Invalid UUID",
+			src:   "alpha",
 			orgID: uuid.FromStringOrNil(folder.DefaultOrgID + "."),
 			folders: []folder.Folder{
 				{
@@ -117,6 +119,7 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 		},
 		{
 			name:  "Test with Non Existent FileName",
+			src:   "alpha",
 			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
 			folders: []folder.Folder{
 				{
@@ -130,6 +133,7 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 		},
 		{
 			name:  "Test with File Name in Different Org",
+			src:   "alpha",
 			orgID: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
 			folders: []folder.Folder{
 				{
@@ -148,6 +152,7 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 		},
 		{
 			name:  "Test only inside organisation",
+			src:   "alpha",
 			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
 			folders: []folder.Folder{
 				{
@@ -182,6 +187,7 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 		},
 		{
 			name:  "Test with Valid UUID",
+			src:   "alpha",
 			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
 			folders: []folder.Folder{
 				{
@@ -229,7 +235,7 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := folder.NewDriver(tt.folders)
-			get := f.GetAllChildFolders(tt.orgID, "alpha")
+			get := f.GetAllChildFolders(tt.orgID, tt.src)
 
 			if !reflect.DeepEqual(get, tt.want) {
 				t.Errorf("GetFoldersByOrgID() = %v, want %v", get, tt.want)
