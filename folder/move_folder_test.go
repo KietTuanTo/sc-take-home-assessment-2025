@@ -90,7 +90,7 @@ func Test_folder_MoveFolder(t *testing.T) {
 			err:  errors.New("error: cannot move a folder to a different organization"),
 		},
 		{
-			name:  "Destination is a child of Source",
+			name:  "Destination is an immediate child of Source",
 			src:   "alpha",
 			dst:   "beta",
 			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
@@ -104,6 +104,32 @@ func Test_folder_MoveFolder(t *testing.T) {
 					Name:  "beta",
 					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
 					Paths: "alpha.beta",
+				},
+			},
+
+			want: []folder.Folder{},
+			err:  errors.New("error: cannot move a folder to a child of itself"),
+		},
+		{
+			name:  "Destination is a child of Source",
+			src:   "alpha",
+			dst:   "charlie",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.beta",
+				},
+				{
+					Name:  "charlie",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.charlie",
 				},
 			},
 
