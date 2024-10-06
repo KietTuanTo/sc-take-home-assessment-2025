@@ -153,7 +153,7 @@ func Test_folder_MoveFolder(t *testing.T) {
 			err: nil,
 		},
 		{
-			name:  "Valid Use Case 2",
+			name:  "Move folder to another root folder",
 			src:   "bravo",
 			dst:   "golf",
 			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
@@ -225,7 +225,7 @@ func Test_folder_MoveFolder(t *testing.T) {
 			err: nil,
 		},
 		{
-			name:  "Valid Use Case 3",
+			name:  "Move folder to a non-root folder",
 			src:   "bravo",
 			dst:   "delta",
 			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
