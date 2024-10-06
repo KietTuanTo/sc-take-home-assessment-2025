@@ -30,6 +30,9 @@ type IDriver interface {
 	MoveFolder(name string, dst string) ([]Folder, error)
 }
 
+// ASSUMPTION: no folder names in 'folders' contain the
+// character '.', and this character is only used to
+// separate the path of a file
 func NewDriver(folders []Folder) IDriver {
 	orgs := GenerateOrgs(folders)
 
