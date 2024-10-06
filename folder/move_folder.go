@@ -92,15 +92,21 @@ func (f *driver) MoveFolder(name string, dst string) ([]Folder, error) {
 		return []Folder{}, errors.New("error: cannot move a folder to a child of itself")
 	}
 
+	// Change parent of source file to new parent, and remove source file
+	// from the children of old parent node
 	srcParent := srcFolder.parent
 	if srcParent != nil {
 		srcParent.children = RemoveChild(srcParent, srcFolder.file.Name)
 	}
 
+	// Set parent of source file to new parent, add source file to destination
+	// node children.
 	srcFolder.parent = dstFolder
 	dstFolder.children = append(dstFolder.children, srcFolder)
-	srcFolder.file.Paths = srcFolder.parent.file.Paths + "." + srcFolder.file.Name
 
+	// Change file paths according to new parent file path for all children
+	// in the subtree that has been moved
+	srcFolder.file.Paths = srcFolder.parent.file.Paths + "." + srcFolder.file.Name
 	ChangeChildPaths(srcFolder)
 
 	folderList := CreateFolderSlice(f.orgs)
