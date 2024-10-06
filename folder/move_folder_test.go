@@ -296,6 +296,77 @@ func Test_folder_MoveFolder(t *testing.T) {
 			},
 			err: nil,
 		},
+		{
+			name:  "Move folder to subsequent parent folder",
+			src:   "charlie",
+			dst:   "alpha",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "bravo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.bravo",
+				},
+				{
+					Name:  "charlie",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.bravo.charlie",
+				},
+				{
+					Name:  "delta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.bravo.charlie.delta",
+				},
+				{
+					Name:  "gamma",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.bravo.charlie.gamma",
+				},
+				{
+					Name:  "epsilon",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.bravo.charlie.delta.epsilon",
+				},
+			},
+			want: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "bravo",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.bravo",
+				},
+				{
+					Name:  "charlie",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.charlie",
+				},
+				{
+					Name:  "delta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.charlie.delta",
+				},
+				{
+					Name:  "gamma",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.charlie.gamma",
+				},
+				{
+					Name:  "epsilon",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha.charlie.delta.epsilon",
+				},
+			},
+			err: nil,
+		},
 	}
 
 	for _, tt := range tests {
