@@ -230,6 +230,25 @@ func Test_folder_GetAllChildFolders(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:  "Test with no children",
+			src:   "alpha",
+			orgID: uuid.FromStringOrNil(folder.DefaultOrgID),
+			folders: []folder.Folder{
+				{
+					Name:  "alpha",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "alpha",
+				},
+				{
+					Name:  "beta",
+					OrgId: uuid.FromStringOrNil(folder.DefaultOrgID),
+					Paths: "beta",
+				},
+			},
+
+			want: []folder.Folder{},
+		},
 	}
 
 	for _, tt := range tests {
